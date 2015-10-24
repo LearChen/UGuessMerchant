@@ -161,5 +161,14 @@ public enum OperErrorCode {
     /**
      * 支付异常重新查询
      */
-    PayRequery
+    PayRequery,
+
+    TicketNotExist,
+
+    TicketAlreadyUsed,
+
+    TicketExpired,
+
+    TicketNoPermision,
+
 }

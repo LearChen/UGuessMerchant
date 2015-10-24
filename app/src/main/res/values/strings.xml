@@ -27,4 +27,8 @@
     <string name="tip_user_login_fail">登录失败</string>
     <string name="tip_user_name_not_exist">用户名不存在</string>
     <string name="warning_cannt_rec_barcode">无法识别此二维码</string>
+    <string name="warning_invalid">无效</string>
+    <string name="ticket_not_exist">券码有误请核对</string>
+    <string name="ticket_no_permision">此券码不可核销</string>
+
 </resources>

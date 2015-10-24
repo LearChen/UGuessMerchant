@@ -180,6 +180,14 @@ public class ProcessStatus {
          */
         PayRequery,
 
+        TicketNotExist,
+
+        TicketAlreadyUsed,
+
+        TicketExpired,
+
+        TicketNoPermision,
+
     }
 
     public static OperErrorCode convertFromStatus(Status status) {
@@ -248,6 +256,14 @@ public class ProcessStatus {
                 return OperErrorCode.PayRequery;
             case ErrNickNameExist:
                 return OperErrorCode.UidExist;
+            case TicketNotExist:
+                return OperErrorCode.TicketNotExist;
+            case TicketAlreadyUsed:
+                return OperErrorCode.TicketAlreadyUsed;
+            case TicketExpired:
+                return OperErrorCode.TicketExpired;
+            case TicketNoPermision:
+                return OperErrorCode.TicketNoPermision;
             default:
                 return OperErrorCode.Unknown;
         }

@@ -615,6 +615,14 @@ public class Const {
          */
         public static final int RESULT_PAY_REQUERY = 37;
 
+        public static final int RESULT_TICKET_NOT_EXIST = 40;
+
+        public static final int RESULT_TICKET_ALREADY_USED = 41;
+
+        public static final int RESULT_TICKET_EXPIRED = 42;
+
+        public static final int RESULT_TICKET_NO_PERMISION = 43;
+
     }
 
 

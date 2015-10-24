@@ -6,21 +6,108 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import uguess.qucai.com.merchant.R;
+import uguess.qucai.com.merchant.business.common.logic.LogicFactory;
+import uguess.qucai.com.merchant.business.common.module.Ticket;
+import uguess.qucai.com.merchant.business.main.logic.TicketLogic;
+import uguess.qucai.com.merchant.business.main.logic.event.TicketEventArgs;
+import uguess.qucai.com.merchant.framework.event.EventArgs;
+import uguess.qucai.com.merchant.framework.event.EventId;
+import uguess.qucai.com.merchant.framework.event.EventListener;
+import uguess.qucai.com.merchant.framework.event.OperErrorCode;
 import uguess.qucai.com.merchant.framework.ui.base.BaseActivity;
+import uguess.qucai.com.merchant.framework.ui.helper.Alert;
 
 public class TicketDetailActivity extends BaseActivity {
 
     private TextView vTicketCode;
+    private TicketLogic logic;
+
+    private TextView vTicketName;
+    private TextView vTicketValue;
+    private TextView vTicketDeadline;
+    private TextView vTicketStatus;
+    private Button vUseTicket;
+
+    private String ticketId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ticket_detail);
+
         vTicketCode= (TextView)findViewById(R.id.textview_ticket_code);
-        vTicketCode.setText(getIntent().getStringExtra("code"));
+        vTicketName = (TextView)findViewById(R.id.tv_ticket_name);
+        vTicketValue = (TextView)findViewById(R.id.tv_ticket_content);
+        vTicketDeadline = (TextView)findViewById(R.id.tv_ticket_deadline);
+        vTicketStatus = (TextView)findViewById(R.id.tv_ticket_status);
+        vUseTicket = (Button)findViewById(R.id.btn_use_ticket);
+
+        String codeParam = getIntent().getStringExtra("code");
+        StringBuffer viewCode = new StringBuffer();
+        for(int i=0;i<codeParam.length();i+=4){
+            if(i+4<codeParam.length()){
+                viewCode.append(codeParam.substring(i,i+4));
+                viewCode.append(" ");
+            }else {
+                viewCode.append(codeParam.substring(i));
+            }
+        }
+        vTicketCode.setText(viewCode.toString());
+        logic = (TicketLogic)LogicFactory.self().get(LogicFactory.Type.Ticket);
+        logic.getTicketDetail(codeParam, createUIEventListener(new EventListener() {
+            @Override
+            public void onEvent(EventId id, EventArgs args) {
+                stopLoading();
+                TicketEventArgs result = (TicketEventArgs) args;
+                OperErrorCode errCode = result.getErrCode();
+                vUseTicket.setClickable(false);
+                switch (errCode) {
+                    case Success:
+                        setValue(result.getResult());
+                        vUseTicket.setClickable(true);
+                        break;
+                    case TicketNotExist:
+                        Alert.Toast(R.string.ticket_not_exist);
+                        break;
+                    case TicketExpired:
+                        Alert.Toast(R.string.text_status_expired);
+                        break;
+                    case TicketAlreadyUsed:
+                        Alert.Toast(R.string.text_status_used);
+                        break;
+                    case TicketNoPermision:
+                        Alert.Toast(R.string.ticket_no_permision);
+                        break;
+                    default:
+                        Alert.Toast(R.string.ticket_no_permision);
+                        break;
+                }
+            }
+        }));
+    }
+
+    private void setValue(Ticket result){
+        vTicketName.setText(result.getTicketName());
+        vTicketDeadline.setText(result.getExpireTime());
+        switch (result.getStatus()){
+            case 0:
+                vTicketStatus.setText(R.string.text_status_useful);
+                break;
+            case 1:
+                vTicketStatus.setText(R.string.text_status_used);
+                break;
+            case 2:
+                vTicketStatus.setText(R.string.text_status_expired);
+                break;
+            default:
+                vTicketStatus.setText(R.string.warning_invalid);
+        }
+        vTicketValue.setText(result.getTicketValue());
+        ticketId = result.getId();
     }
 
     public void useTicket(View view){

@@ -189,6 +189,18 @@ abstract public class BaseProcess {
             case RESULT_PAY_REQUERY:
                 mStatus = PayRequery;
                 break;
+            case RESULT_TICKET_NOT_EXIST:
+                mStatus = TicketNotExist;
+                break;
+            case RESULT_TICKET_ALREADY_USED:
+                mStatus = TicketAlreadyUsed;
+                break;
+            case RESULT_TICKET_EXPIRED:
+                mStatus = TicketExpired;
+                break;
+            case RESULT_TICKET_NO_PERMISION:
+                mStatus = TicketNoPermision;
+                break;
             default:
                 mStatus = ErrUnkown;
         }

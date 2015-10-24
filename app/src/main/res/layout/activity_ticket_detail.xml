@@ -141,6 +141,7 @@
 
     </LinearLayout>
     <Button
+        android:id="@+id/btn_use_ticket"
         android:layout_width="fill_parent"
         android:layout_height="90dp"
         android:onClick="useTicket"
