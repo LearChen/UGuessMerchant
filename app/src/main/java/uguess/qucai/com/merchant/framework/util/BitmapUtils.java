@@ -1,0 +1,466 @@
+/*
+ * Copyright(c) 2015, QuCai, Inc. All rights reserved.
+ * This software is the confidential and proprietary information of QuCai, Inc.
+ * You shall not disclose such Confidential Information and shall use it only in
+ * accordance with the terms of the license agreement you entered into with QuCai.
+ */
+
+package uguess.qucai.com.merchant.framework.util;
+
+/**
+ * Created by NO3 on 2015/3/7.
+ */
+
+import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
+import android.net.Uri;
+import android.os.Environment;
+import android.os.StatFs;
+import android.view.Display;
+import android.view.View;
+import android.view.WindowManager;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+
+import uguess.qucai.com.merchant.util.Const;
+
+public class BitmapUtils {
+
+
+    /**
+     * 请求码
+     */
+    public static final int IMAGE_REQUEST_CODE = 0;
+    public static final int CAMERA_REQUEST_CODE = 1;
+
+    /**
+     * 获取SDCard文件
+     *
+     * @return Bitmap
+     */
+    public static Bitmap getImageFromSDCard(String imageName, int source, Activity activity) {
+        ContentResolver cr = activity.getContentResolver();
+        try {
+            Bitmap original = BitmapUtils.getThumbUploadPath(cr, imageName, 1000);
+            Bitmap current = null;
+            switch (source) {
+                case IMAGE_REQUEST_CODE:
+                    current = original;
+                    break;
+                case CAMERA_REQUEST_CODE:
+                    java.io.File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+                    java.io.File tempFile = new java.io.File(path, Const.IMAGE_FILE_NAME);
+                    int rotate = getRotatedDegree(tempFile.getPath());
+                    if (rotate != 0) {
+                        Matrix m = new Matrix();
+                        m.setRotate(rotate, (float) original.getWidth() / 2, (float) original.getHeight() / 2);
+                        current = Bitmap.createBitmap(original, 0, 0, original.getWidth(), original.getHeight(), m, true);
+                    } else {
+                        current = original;
+                    }
+
+                    break;
+            }
+            return current;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 获取图片角度
+     *
+     * @param path 图片路径
+     * @return
+     */
+    public static int getRotatedDegree(String path) {
+        int rotate = 0;
+        try {
+            ExifInterface exifInterface = new ExifInterface(path);
+            int result = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_UNDEFINED);
+            switch (result) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    rotate = 90;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    rotate = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    rotate = 270;
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rotate;
+    }
+
+
+    /**
+     * 获取压缩后的图片
+     *
+     * @param cr
+     * @param oldPath
+     * @param bitmapMaxWidth
+     * @return
+     * @throws Exception
+     */
+    public static Bitmap getThumbUploadPath(ContentResolver cr, String oldPath, int bitmapMaxWidth) throws Exception {
+        Uri u = Uri.parse(oldPath);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(cr.openInputStream(u), null, options);
+        int height = options.outHeight;
+        int width = options.outWidth;
+        int reqHeight = 0;
+        int reqWidth = bitmapMaxWidth;
+        reqHeight = (reqWidth * height) / width;
+        // 在内存中创建bitmap对象，这个对象按照缩放大小创建的
+        options.inSampleSize = calculateInSampleSize(options, bitmapMaxWidth, reqHeight);
+        options.inJustDecodeBounds = false;
+        Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(u), null, options);
+        bitmap = compressImage(Bitmap.createScaledBitmap(bitmap, bitmapMaxWidth, reqHeight, false));
+        return bitmap;
+    }
+
+    public static Bitmap zoomImage(Bitmap bgimage, double newWidth, double newHeight) {
+        // 获取这个图片的宽和高
+        float width = bgimage.getWidth();
+        float height = bgimage.getHeight();
+        // 创建操作图片用的matrix对象
+        Matrix matrix = new Matrix();
+        // 计算宽高缩放率
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // 缩放图片动作
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap bitmap = Bitmap.createBitmap(bgimage, 0, 0, (int) width,
+                (int) height, matrix, true);
+        return bitmap;
+    }
+
+
+    /**
+     * 计算图片的长度与宽度
+     *
+     * @param options
+     * @param reqWidth
+     * @param reqHeight
+     * @return
+     */
+    private static int calculateInSampleSize(BitmapFactory.Options options,
+                                             int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            if (width > height) {
+                inSampleSize = Math.round((float) height / (float) reqHeight);
+            } else {
+                inSampleSize = Math.round((float) width / (float) reqWidth);
+            }
+        }
+        return inSampleSize;
+    }
+
+    /**
+     * 压缩图片
+     *
+     * @param image
+     * @return Bitmap 压缩完成后的图片
+     */
+    public static Bitmap compressImage(Bitmap image) {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 80, baos);// 质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+        int options = 100;
+        while (baos.toByteArray().length / 1024 > 200) { // 循环判断如果压缩后图片是否大于200kb,大于继续压缩
+            options -= 10;// 每次都减少10
+            baos.reset();// 重置baos即清空baos
+            image.compress(Bitmap.CompressFormat.JPEG, options, baos);// 这里压缩options%，把压缩后的数据存放到baos中
+        }
+        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());// 把压缩后的数据baos存放到ByteArrayInputStream中
+        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);// 把ByteArrayInputStream数据生成图片
+        return bitmap;
+    }
+
+
+    /**
+     * 将bitmap存到内存卡种
+     *
+     * @param b Bitmap
+     * @return 图片存储的位置
+     * @throws java.io.FileNotFoundException
+     */
+    public static String saveImg(Bitmap b, String name) throws Exception {
+        String path = Environment.getExternalStorageDirectory().getPath() + File.separator + "QuCai/shareImg/";
+        File mediaFile = new File(path + File.separator + name + ".jpg");
+        if (mediaFile.exists()) {
+            mediaFile.delete();
+
+        }
+        if (!new File(path).exists()) {
+            new File(path).mkdirs();
+        }
+        mediaFile.createNewFile();
+        FileOutputStream fos = new FileOutputStream(mediaFile);
+        b.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        fos.flush();
+        fos.close();
+        b.recycle();
+        b = null;
+        System.gc();
+        return mediaFile.getPath();
+    }
+
+
+    /**
+     * 将Drawable转换为Bitmap
+     *
+     * @param drawable
+     * @return
+     */
+    public static Bitmap drawableToBitamp(Drawable drawable) {
+        int w = drawable.getIntrinsicWidth();
+        int h = drawable.getIntrinsicHeight();
+        Bitmap.Config config =
+                drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
+                        : Bitmap.Config.RGB_565;
+        Bitmap bitmap = Bitmap.createBitmap(w, h, config);
+        //注意，下面三行代码要用到，否在在View或者surfaceview里的canvas.drawBitmap会看不到图
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, w, h);
+        drawable.draw(canvas);
+        return bitmap;
+    }
+
+
+    /**
+     * 读取本地资源的图片
+     *
+     * @param context
+     * @param resId
+     * @return
+     */
+    public static Bitmap ReadBitmapById(Context context, int resId) {
+        BitmapFactory.Options opt = new BitmapFactory.Options();
+        opt.inPreferredConfig = Bitmap.Config.RGB_565;
+        opt.inPurgeable = true;
+        opt.inInputShareable = true;
+        // 获取资源图片
+        InputStream is = context.getResources().openRawResource(resId);
+        return BitmapFactory.decodeStream(is, null, opt);
+    }
+
+    /**
+     * 根据资源文件获取Bitmap
+     *
+     * @param context
+     * @param drawableId
+     * @return
+     */
+    public static Bitmap ReadBitmapById(Context context, int drawableId,
+                                        int screenWidth, int screenHight) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        options.inInputShareable = true;
+        options.inPurgeable = true;
+        InputStream stream = context.getResources().openRawResource(drawableId);
+        Bitmap bitmap = BitmapFactory.decodeStream(stream, null, options);
+        return getBitmap(bitmap, screenWidth, screenHight);
+    }
+
+    /**
+     * 等比例压缩图片
+     *
+     * @param bitmap
+     * @param screenWidth
+     * @param screenHight
+     * @return
+     */
+    public static Bitmap getBitmap(Bitmap bitmap, int screenWidth,
+                                   int screenHight) {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+        Matrix matrix = new Matrix();
+        float scale = (float) screenWidth / w;
+        float scale2 = (float) screenHight / h;
+
+        // scale = scale < scale2 ? scale : scale2;
+
+        // 保证图片不变形.
+        matrix.postScale(scale, scale);
+        // w,h是原图的属性.
+        return Bitmap.createBitmap(bitmap, 0, 0, w, h, matrix, true);
+    }
+
+    /**
+     * 保存图片至SD卡
+     *
+     * @param bm
+     * @param url
+     * @param quantity
+     */
+    private static int FREE_SD_SPACE_NEEDED_TO_CACHE = 1;
+    private static int MB = 1024 * 1024;
+    public final static String DIR = "/sdcard/QuCai";
+
+    public static void saveBmpToSd(Bitmap bm, String url, int quantity) {
+        // 判断sdcard上的空间
+        if (FREE_SD_SPACE_NEEDED_TO_CACHE > freeSpaceOnSd()) {
+            return;
+        }
+        if (!Environment.MEDIA_MOUNTED.equals(Environment
+                .getExternalStorageState()))
+            return;
+        String filename = url;
+        // 目录不存在就创建
+        File dirPath = new File(DIR);
+        if (!dirPath.exists()) {
+            dirPath.mkdirs();
+        }
+
+        File file = new File(DIR + "/" + filename);
+        try {
+            file.createNewFile();
+            OutputStream outStream = new FileOutputStream(file);
+            bm.compress(Bitmap.CompressFormat.PNG, quantity, outStream);
+            outStream.flush();
+            outStream.close();
+
+        } catch (FileNotFoundException e) {
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * 获取SD卡图片
+     *
+     * @param url
+     * @param quantity
+     * @return
+     */
+    public static Bitmap GetBitmap(String url, int quantity) {
+        InputStream inputStream = null;
+        String filename = "";
+        Bitmap map = null;
+        URL url_Image = null;
+        String LOCALURL = "";
+        if (url == null)
+            return null;
+        try {
+            filename = url;
+        } catch (Exception err) {
+        }
+
+        LOCALURL = URLEncoder.encode(filename);
+        if (Exist(DIR + "/" + LOCALURL)) {
+            map = BitmapFactory.decodeFile(DIR + "/" + LOCALURL);
+        } else {
+            try {
+                url_Image = new URL(url);
+                inputStream = url_Image.openStream();
+                map = BitmapFactory.decodeStream(inputStream);
+                // url = URLEncoder.encode(url, "UTF-8");
+                if (map != null) {
+                    saveBmpToSd(map, LOCALURL, quantity);
+                }
+                inputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return map;
+    }
+
+    /**
+     * 判断图片是存在
+     *
+     * @param url
+     * @return
+     */
+    public static boolean Exist(String url) {
+        File file = new File(DIR + url);
+        return file.exists();
+    }
+
+    /**
+     * 计算sdcard上的剩余空间 * @return
+     */
+    private static int freeSpaceOnSd() {
+        StatFs stat = new StatFs(Environment.getExternalStorageDirectory()
+                .getPath());
+        double sdFreeMB = ((double) stat.getAvailableBlocks() * (double) stat
+                .getBlockSize()) / MB;
+
+        return (int) sdFreeMB;
+    }
+
+    /**
+     * 获取和保存当前屏幕的截图
+     *
+     * @param activity 需要截取屏幕的activity
+     * @return 返回截图
+     */
+    public static Bitmap GetandSaveCurrentImage(Activity activity) {
+        //构建Bitmap
+        WindowManager windowManager = activity.getWindowManager();
+        Display display = windowManager.getDefaultDisplay();
+        int w = display.getWidth();
+        int h = display.getHeight();
+        Bitmap Bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        //获取屏幕
+        View decorview = activity.getWindow().getDecorView();
+        decorview.setDrawingCacheEnabled(true);
+        Bmp = decorview.getDrawingCache();
+        return Bmp;
+    }
+
+    /**
+     * 通过网络地址获得bitmap图片
+     *
+     * @param urlpath 图片的网络地址
+     * @return
+     * @throws Exception
+     */
+    public static Bitmap getImage(String urlpath) throws Exception {
+        Bitmap bitmap = null;
+        URL url = new URL(urlpath);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setConnectTimeout(5 * 1000);
+        if (conn.getResponseCode() == 200) {
+            InputStream inputStream = conn.getInputStream();
+            bitmap = BitmapFactory.decodeStream(inputStream);
+        }
+        return bitmap;
+    }
+}

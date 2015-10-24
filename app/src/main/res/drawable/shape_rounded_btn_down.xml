@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ /*
+  ~   Copyright(c) 2015, QuCai8, Inc. All rights reserved.
+  ~   This software is the confidential and proprietary information of QuCai8, Inc.
+  ~   You shall not disclose such Confidential Information and shall use it only in
+  ~   accordance with the terms of the license agreement you entered into with QuCai8.
+  ~  */
+  -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/bg_login_input" />
+    <!-- 圆角 -->
+    <corners android:radius="10dp" />
+    <stroke
+        android:width="1dp"
+        android:color="@color/white" />
+</shape>

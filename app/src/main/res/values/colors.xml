@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="transparent">#7f000000</color>
+    <color name="white">#FFF</color>
+    <color name="main">#f75842</color>
+    <color name="color_pressed">#ff7448</color>
+    <color name="all_transparent">#00000000</color>
+    <color name="bg_login">#3c3c47</color>
+    <color name="bg_login_input">#63636c</color>
+    <color name="common_bg">#f1f1f1</color>
+    <color name="container_board">#e3e3e3</color>
+    <color name="text_color">#666666</color>
+    <color name="lable_color">#bfbfbf</color>
+</resources>

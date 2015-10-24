@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <cn.bingoogolapple.qrcode.zbar.ZBarView
+        android:id="@+id/zbarview"
+        app:qrcv_topOffset="90dp"
+        app:qrcv_cornerColor="#0f0"
+        app:qrcv_cornerSize="3dp"
+        app:qrcv_cornerLength="20dp"
+        app:qrcv_maskColor="#3fff"
+        app:qrcv_scanLineColor="#f00"
+        app:qrcv_scanLineSize="2dp"
+        app:qrcv_rectWidth="200dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>
