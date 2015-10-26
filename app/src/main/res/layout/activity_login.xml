@@ -75,6 +75,7 @@
                 android:textColor="@color/white"
                 android:textColorHint="@color/white"
                 android:hint="@string/hint_pwd"
+                android:inputType="textPassword"
                 android:layout_marginLeft="15dp"/>
         </LinearLayout>
 

@@ -8,9 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import uguess.qucai.com.merchant.R;
+import uguess.qucai.com.merchant.business.common.component.QCActionBar;
 import uguess.qucai.com.merchant.business.common.logic.LogicFactory;
 import uguess.qucai.com.merchant.business.common.module.Ticket;
 import uguess.qucai.com.merchant.business.main.logic.TicketLogic;
@@ -46,7 +49,7 @@ public class TicketDetailActivity extends BaseActivity {
         vTicketDeadline = (TextView)findViewById(R.id.tv_ticket_deadline);
         vTicketStatus = (TextView)findViewById(R.id.tv_ticket_status);
         vUseTicket = (Button)findViewById(R.id.btn_use_ticket);
-
+        initActionBar();
         String codeParam = getIntent().getStringExtra("code");
         StringBuffer viewCode = new StringBuffer();
         for(int i=0;i<codeParam.length();i+=4){
@@ -122,7 +125,7 @@ public class TicketDetailActivity extends BaseActivity {
     }
 
     public void useTicket(View view){
-        logic.useTicket(ticketId,createUIEventListener(new EventListener() {
+        logic.useTicket(ticketId, createUIEventListener(new EventListener() {
             @Override
             public void onEvent(EventId id, EventArgs args) {
 
@@ -131,7 +134,7 @@ public class TicketDetailActivity extends BaseActivity {
                 OperErrorCode errCode = result.getErrCode();
                 switch (errCode) {
                     case Success:
-                        startActivity(new Intent(getActivity(),TicketUsedActivity.class));
+                        startActivity(new Intent(getActivity(), TicketUsedActivity.class));
                         finish();
                         break;
                     case TicketNotExist:
@@ -158,6 +161,15 @@ public class TicketDetailActivity extends BaseActivity {
             }
         }));
         startLoading();
+    }
+
+    /**
+     * 初始化ActionBar
+     */
+    private void initActionBar() {
+        //初始化actionbar并获取操作按钮
+        QCActionBar actionBar = (QCActionBar) findViewById(R.id.action_bar);
+        actionBar.setTitle(R.string.title_activity_ticket_detail);
     }
 
 

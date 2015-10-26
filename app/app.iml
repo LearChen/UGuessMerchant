@@ -107,5 +107,6 @@
     <orderEntry type="library" exported="" name="zbar-1.0.0" level="project" />
     <orderEntry type="library" exported="" name="analytics-5.6.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-22.2.1" level="project" />
+    <orderEntry type="library" exported="" name="android-android-22" level="project" />
   </component>
 </module>

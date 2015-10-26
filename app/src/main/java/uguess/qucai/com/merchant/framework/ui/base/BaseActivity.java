@@ -32,8 +32,6 @@ public class BaseActivity extends SuperActivity {
     public BaseActivity getActivity() {
         return this;
     }
-    private IntentFilter mIntentFilter;
-    private NetWorkState mNetWorkState;
 
     // flag
     /**
@@ -95,10 +93,6 @@ public class BaseActivity extends SuperActivity {
         mCreated = true;
         mEventListenerHelper.setHost(this);
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        mNetWorkState = new NetWorkState();
-        registerReceiver(mNetWorkState, mIntentFilter);
         //PushAgent.getInstance(getActivity()).onAppStart();
 
 
@@ -199,21 +193,4 @@ public class BaseActivity extends SuperActivity {
 ////        notificationManager.cancel(notifiId);
 //    }
 
-    private class NetWorkState extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            mNetworkInfo = connectivityManager.getActiveNetworkInfo();
-            if (mNetworkInfo == null || !mNetworkInfo.isAvailable()) {
-                Alert.Toast(getString(R.string.network_is_unavailable));
-            }
-        }
-    }
-
-    public NetworkInfo getmNetworkInfo() {
-        return mNetworkInfo;
-    }
-
-    private NetworkInfo mNetworkInfo;
 }

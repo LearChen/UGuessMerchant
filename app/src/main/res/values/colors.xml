@@ -14,4 +14,5 @@
     <color name="container_board">#e3e3e3</color>
     <color name="text_color">#666666</color>
     <color name="lable_color">#bfbfbf</color>
+    <color name="welcome_text_color">#9797a7</color>
 </resources>

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="uguess.qucai.com.merchant" >
+    package="uguess.qucai.com.merchant"
+    android:versionCode="100001"
+    android:versionName="1.0.0.0.01">
 
     <!-- 基本公用权限（除本应用外可能被umeng等多个第三方库需要） -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -52,17 +54,20 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".business.user.ui.LoginActivity"
-            android:label="@string/title_activity_login" >
+            android:label="@string/title_activity_login"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".business.main.ui.WriteOffActivity"
             android:label="@string/title_activity_write_off"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".business.main.ui.TicketDetailActivity"
             android:label="@string/title_activity_ticket_detail"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".business.main.ui.ZbarScanActivity"
@@ -70,12 +75,14 @@
         <activity
             android:name=".business.main.ui.TicketUsedActivity"
             android:label="@string/title_activity_ticket_used"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".business.main.ui.WelcomeActivity"
             android:label="@string/title_activity_welcome"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
