@@ -31,5 +31,10 @@
     <string name="ticket_not_exist">券码有误请核对</string>
     <string name="ticket_no_permision">此券码不可核销</string>
     <string name="title_activity_ticket_used">TicketUsedActivity</string>
+    <string name="info_ticket_use_success">券码已成功使用</string>
+    <string name="text_return_to_scan">返回到扫码</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
+    <string name="text_enter">进  入</string>
+
 
 </resources>

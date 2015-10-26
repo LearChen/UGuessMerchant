@@ -131,7 +131,7 @@ public class TicketDetailActivity extends BaseActivity {
                 OperErrorCode errCode = result.getErrCode();
                 switch (errCode) {
                     case Success:
-//                        startActivity(new Intent(this,));
+                        startActivity(new Intent(getActivity(),TicketUsedActivity.class));
                         finish();
                         break;
                     case TicketNotExist:
