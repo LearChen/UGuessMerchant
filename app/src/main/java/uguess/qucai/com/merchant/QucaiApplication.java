@@ -48,10 +48,6 @@ public class QucaiApplication extends Application {
      * 当前的Activity
      */
     private Activity mCurrentActivity = null;
-    /**
-     * 应用的主Activity
-     */
-    private MainActivity mMainActivity;
 
     public String tradeNo;
 
@@ -300,11 +296,4 @@ public class QucaiApplication extends Application {
         return new JSONObject(comm.post(url, parameter));
     }
 
-    public MainActivity getmMainActivity() {
-        return mMainActivity;
-    }
-
-    public void setmMainActivity(MainActivity mMainActivity) {
-        this.mMainActivity = mMainActivity;
-    }
 }
