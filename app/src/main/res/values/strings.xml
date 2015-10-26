@@ -30,5 +30,6 @@
     <string name="warning_invalid">无效</string>
     <string name="ticket_not_exist">券码有误请核对</string>
     <string name="ticket_no_permision">此券码不可核销</string>
+    <string name="title_activity_ticket_used">TicketUsedActivity</string>
 
 </resources>

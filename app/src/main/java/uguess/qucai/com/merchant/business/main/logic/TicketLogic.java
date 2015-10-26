@@ -4,9 +4,12 @@ import uguess.qucai.com.merchant.business.common.cache.Cache;
 import uguess.qucai.com.merchant.business.common.protocol.ProcessStatus;
 import uguess.qucai.com.merchant.business.main.logic.event.TicketEventArgs;
 import uguess.qucai.com.merchant.business.main.protocol.TicketDetailProcess;
+import uguess.qucai.com.merchant.business.main.protocol.TicketUseProcess;
 import uguess.qucai.com.merchant.business.user.logic.event.UserEventArgs;
+import uguess.qucai.com.merchant.framework.event.EventArgs;
 import uguess.qucai.com.merchant.framework.event.EventListener;
 import uguess.qucai.com.merchant.framework.event.OperErrorCode;
+import uguess.qucai.com.merchant.framework.event.StatusEventArgs;
 import uguess.qucai.com.merchant.framework.logic.BaseLogic;
 import uguess.qucai.com.merchant.framework.protocol.ResponseListener;
 import uguess.qucai.com.merchant.framework.util.Logger;
@@ -38,14 +41,27 @@ public class TicketLogic extends BaseLogic {
                 OperErrorCode errCode = ProcessStatus.convertFromStatus(process.getStatus());
                 logger.d("login process response, " + errCode);
                 TicketEventArgs ticketEventArgs = new TicketEventArgs(process.getResult(), errCode);
-                if (errCode == OperErrorCode.Success) {
-                    Cache.getInstance().setLoginFlag(true);
-                }
                 //发送事件
                 fireEvent(listener, ticketEventArgs);
             }
         });
 
+    }
+
+    public void useTicket(String ticketId,final EventListener listener){
+        final TicketUseProcess process = new TicketUseProcess();
+        process.setTicketId(ticketId);
+        process.run(new ResponseListener() {
+            @Override
+            public void onResponse(String requestId) {
+                // 状态转换：从调用结果状态转为操作结果状态
+                OperErrorCode errCode = ProcessStatus.convertFromStatus(process.getStatus());
+                logger.d("login process response, " + errCode);
+                EventArgs ticketEventArgs = new StatusEventArgs(errCode);
+                //发送事件
+                fireEvent(listener, ticketEventArgs);
+            }
+        });
     }
 
 }

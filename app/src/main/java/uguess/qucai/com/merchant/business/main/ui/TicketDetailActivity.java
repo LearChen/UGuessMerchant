@@ -1,5 +1,6 @@
 package uguess.qucai.com.merchant.business.main.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -61,7 +62,6 @@ public class TicketDetailActivity extends BaseActivity {
         logic.getTicketDetail(codeParam, createUIEventListener(new EventListener() {
             @Override
             public void onEvent(EventId id, EventArgs args) {
-                stopLoading();
                 TicketEventArgs result = (TicketEventArgs) args;
                 OperErrorCode errCode = result.getErrCode();
                 vUseTicket.setClickable(false);
@@ -71,19 +71,30 @@ public class TicketDetailActivity extends BaseActivity {
                         vUseTicket.setClickable(true);
                         break;
                     case TicketNotExist:
-                        Alert.Toast(R.string.ticket_not_exist);
+                        setValue(result.getResult());
+                        vUseTicket.setText(R.string.ticket_not_exist);
+//                        Alert.Toast(R.string.ticket_not_exist);
                         break;
                     case TicketExpired:
-                        Alert.Toast(R.string.text_status_expired);
+                        setValue(result.getResult());
+                        vUseTicket.setText(R.string.text_status_expired);
+//                        Alert.Toast(R.string.text_status_expired);
                         break;
                     case TicketAlreadyUsed:
-                        Alert.Toast(R.string.text_status_used);
+                        setValue(result.getResult());
+                        vUseTicket.setText(R.string.text_status_used);
+//                        Alert.Toast(R.string.text_status_used);
                         break;
                     case TicketNoPermision:
-                        Alert.Toast(R.string.ticket_no_permision);
+                        setValue(result.getResult());
+                        vUseTicket.setText(R.string.ticket_no_permision);
+//                        Alert.Toast(R.string.ticket_no_permision);
                         break;
                     default:
-                        Alert.Toast(R.string.ticket_no_permision);
+                        setValue(result.getResult());
+                        vUseTicket.setText(R.string.ticket_no_permision);
+                        vTicketStatus.setText(R.string.warning_invalid);
+//                        Alert.Toast(R.string.ticket_no_permision);
                         break;
                 }
             }
@@ -111,7 +122,42 @@ public class TicketDetailActivity extends BaseActivity {
     }
 
     public void useTicket(View view){
+        logic.useTicket(ticketId,createUIEventListener(new EventListener() {
+            @Override
+            public void onEvent(EventId id, EventArgs args) {
 
+                stopLoading();
+                TicketEventArgs result = (TicketEventArgs) args;
+                OperErrorCode errCode = result.getErrCode();
+                switch (errCode) {
+                    case Success:
+//                        startActivity(new Intent(this,));
+                        finish();
+                        break;
+                    case TicketNotExist:
+                        vUseTicket.setText(R.string.ticket_not_exist);
+                        Alert.Toast(R.string.ticket_not_exist);
+                        break;
+                    case TicketExpired:
+                        vUseTicket.setText(R.string.text_status_expired);
+                        Alert.Toast(R.string.text_status_expired);
+                        break;
+                    case TicketAlreadyUsed:
+                        vUseTicket.setText(R.string.text_status_used);
+                        Alert.Toast(R.string.text_status_used);
+                        break;
+                    case TicketNoPermision:
+                        vUseTicket.setText(R.string.ticket_no_permision);
+                        Alert.Toast(R.string.ticket_no_permision);
+                        break;
+                    default:
+                        vUseTicket.setText(R.string.ticket_no_permision);
+                        Alert.Toast(R.string.ticket_no_permision);
+                        break;
+                }
+            }
+        }));
+        startLoading();
     }
 
 

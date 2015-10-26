@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="uguess.qucai.com.merchant" >
+
     <!-- 基本公用权限（除本应用外可能被umeng等多个第三方库需要） -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -41,14 +42,14 @@
     <uses-permission android:name="android.permission.BROADCAST_PACKAGE_REPLACED" />
     <uses-permission android:name="android.permission.RESTART_PACKAGES" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
+        android:name=".QucaiApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name=".QucaiApplication"
-        >
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".business.user.ui.LoginActivity"
             android:label="@string/title_activity_login" >
@@ -61,18 +62,21 @@
         <activity
             android:name=".business.main.ui.WriteOffActivity"
             android:label="@string/title_activity_write_off"
-            android:parentActivityName=".framework.ui.base.BaseActivity"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity
             android:name=".business.main.ui.TicketDetailActivity"
             android:label="@string/title_activity_ticket_detail"
-            android:parentActivityName=".framework.ui.base.BaseActivity"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity
             android:name=".business.main.ui.ZbarScanActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".business.main.ui.TicketUsedActivity"
+            android:label="@string/title_activity_ticket_used"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>

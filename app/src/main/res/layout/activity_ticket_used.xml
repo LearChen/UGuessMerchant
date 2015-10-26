@@ -1,0 +1,95 @@
+
+<!--
+  ~ /*
+  ~   Copyright(c) 2015, QuCai8, Inc. All rights reserved.
+  ~   This software is the confidential and proprietary information of QuCai8, Inc.
+  ~   You shall not disclose such Confidential Information and shall use it only in
+  ~   accordance with the terms of the license agreement you entered into with QuCai8.
+  ~  */
+  -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_login"
+    android:orientation="vertical"
+    tools:context="uguess.qucai.com.merchant.business.user.ui.LoginActivity">
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/ic_login_logo" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="113dp"
+        android:layout_marginTop="40dp"
+        android:background="@color/bg_login_input"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_user_name"
+                android:layout_marginLeft="40dp"/>
+            <EditText
+                android:id="@+id/edit_user_name"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:background="@null"
+                android:textSize="15sp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:hint="@string/hint_user_name"
+                android:layout_marginLeft="15dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/bg_login"/>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_pwd"
+                android:layout_marginLeft="40dp"/>
+            <EditText
+                android:id="@+id/edit_pwd"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:background="@null"
+                android:textSize="15sp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:hint="@string/hint_pwd"
+                android:layout_marginLeft="15dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="65dp"
+        android:layout_height="60dp"
+        android:onClick="login"
+        android:textColor="@color/white"
+        android:text="@string/text_login"
+        android:textSize="@dimen/text_20sp"
+        android:background="@drawable/selector_login_btn_bg"/>
+</LinearLayout>
