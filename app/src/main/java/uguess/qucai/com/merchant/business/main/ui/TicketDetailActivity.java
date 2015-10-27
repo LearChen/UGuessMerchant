@@ -22,6 +22,7 @@ import uguess.qucai.com.merchant.framework.event.EventArgs;
 import uguess.qucai.com.merchant.framework.event.EventId;
 import uguess.qucai.com.merchant.framework.event.EventListener;
 import uguess.qucai.com.merchant.framework.event.OperErrorCode;
+import uguess.qucai.com.merchant.framework.event.StatusEventArgs;
 import uguess.qucai.com.merchant.framework.ui.base.BaseActivity;
 import uguess.qucai.com.merchant.framework.ui.helper.Alert;
 
@@ -65,13 +66,12 @@ public class TicketDetailActivity extends BaseActivity {
         logic.getTicketDetail(codeParam, createUIEventListener(new EventListener() {
             @Override
             public void onEvent(EventId id, EventArgs args) {
+                stopLoading();
                 TicketEventArgs result = (TicketEventArgs) args;
                 OperErrorCode errCode = result.getErrCode();
-                vUseTicket.setClickable(false);
                 switch (errCode) {
                     case Success:
                         setValue(result.getResult());
-                        vUseTicket.setClickable(true);
                         break;
                     case TicketNotExist:
                         setValue(result.getResult());
@@ -104,6 +104,12 @@ public class TicketDetailActivity extends BaseActivity {
         }));
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startLoading();
+    }
+
     private void setValue(Ticket result){
         vTicketName.setText(result.getTicketName());
         vTicketDeadline.setText(result.getExpireTime());
@@ -113,24 +119,31 @@ public class TicketDetailActivity extends BaseActivity {
                 break;
             case 1:
                 vTicketStatus.setText(R.string.text_status_used);
+                vUseTicket.setText(R.string.text_status_used);
                 break;
             case 2:
                 vTicketStatus.setText(R.string.text_status_expired);
+                vUseTicket.setText(R.string.text_status_expired);
                 break;
             default:
                 vTicketStatus.setText(R.string.warning_invalid);
+                vUseTicket.setText(R.string.warning_invalid);
         }
         vTicketValue.setText(result.getTicketValue());
         ticketId = result.getId();
     }
 
     public void useTicket(View view){
+        if(!getResources().getString(R.string.text_use).equals(vUseTicket.getText().toString())){
+            finish();
+            return;
+        }
         logic.useTicket(ticketId, createUIEventListener(new EventListener() {
             @Override
             public void onEvent(EventId id, EventArgs args) {
 
                 stopLoading();
-                TicketEventArgs result = (TicketEventArgs) args;
+                StatusEventArgs result = (StatusEventArgs) args;
                 OperErrorCode errCode = result.getErrCode();
                 switch (errCode) {
                     case Success:
