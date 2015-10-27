@@ -362,8 +362,8 @@ public class Const {
     public static final String WorkDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/QuCai/";
 
     //服务端接口地址
-    public static final String BASE_URL = "http://test.qucai8.com:8080";
-//    public static final String BASE_URL = "http://www.uguess.me:8080";
+//    public static final String BASE_URL = "http://test.qucai8.com:8080";
+    public static final String BASE_URL = "http://www.uguess.me:8080";
 //    public static final String BASE_URL = "http://192.168.1.127:8080/qps";
 
     // 地图缩放
